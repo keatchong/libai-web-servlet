@@ -17,8 +17,6 @@
 package ai.api.web;
 
 import java.io.IOException;
-
-
 import java.io.Serializable;
 import java.util.Map;
 
@@ -26,7 +24,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 
 import com.google.gson.Gson;
 
@@ -54,9 +51,9 @@ public abstract class AIWebhookServletV1 extends HttpServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     Fulfillment output = new Fulfillment();
-
-    doWebhook(gson.fromJson(request.getReader(),  ai.api.model.AIRequest.class), output);
-
+    
+    boolean testMode  = request.getParameter("testMode") == null?false:true;  
+    doWebhook(gson.fromJson(request.getReader(), AIWebhookRequest.class), output, testMode);
     response.setCharacterEncoding(RESPONSE_CHARACTER_ENCODING);
     response.setContentType(RESPONSE_CONTENT_TYPE);
     gson.toJson(output, response.getWriter());
@@ -67,7 +64,7 @@ public abstract class AIWebhookServletV1 extends HttpServlet {
    * @param input Received request object 
    * @param output Response object. Should be filled in the method.
    */
-  protected abstract void doWebhook( ai.api.model.AIRequest input, Fulfillment output);
+  protected abstract void doWebhook(AIWebhookRequest input, Fulfillment output, boolean testMode);
 
   /**
    * Web-hook request model class
