@@ -52,8 +52,9 @@ public abstract class AIWebhookServletV1 extends HttpServlet {
       throws ServletException, IOException {
     Fulfillment output = new Fulfillment();
     
-    boolean testMode  = request.getParameter("testMode") == null?false:true;  
-    doWebhook(gson.fromJson(request.getReader(), AIWebhookRequest.class), output, testMode);
+    boolean stubMode  = ( request.getParameter("stubMode") == null || request.getParameter("stubMode").equalsIgnoreCase("N"))?false:true;  
+    boolean localMode  = ( request.getParameter("localMode") == null || request.getParameter("localMode").equalsIgnoreCase("N"))?false:true;  
+    doWebhook(gson.fromJson(request.getReader(), AIWebhookRequest.class), output, stubMode, localMode);
     response.setCharacterEncoding(RESPONSE_CHARACTER_ENCODING);
     response.setContentType(RESPONSE_CONTENT_TYPE);
     gson.toJson(output, response.getWriter());
@@ -64,7 +65,7 @@ public abstract class AIWebhookServletV1 extends HttpServlet {
    * @param input Received request object 
    * @param output Response object. Should be filled in the method.
    */
-  protected abstract void doWebhook(AIWebhookRequest input, Fulfillment output, boolean testMode);
+  protected abstract void doWebhook(AIWebhookRequest input, Fulfillment output, boolean stubMode, boolean localMode);
 
   /**
    * Web-hook request model class
